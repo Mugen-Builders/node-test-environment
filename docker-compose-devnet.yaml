@@ -53,6 +53,17 @@ services:
     environment:
       <<: *env-anvil
 
+  prt:
+    depends_on:
+      database:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+      devnet:
+        condition: service_healthy
+    environment:
+      <<: *env-anvil
+
   deployer:
     depends_on:
       database:
