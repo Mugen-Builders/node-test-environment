@@ -1,0 +1,65 @@
+name: cartesi-rollups-node
+x-env: &env-anvil
+  CARTESI_EPOCH_LENGTH: 10
+  CARTESI_BLOCKCHAIN_DEFAULT_BLOCK: "latest"
+  CARTESI_AUTH_KIND: private_key
+  CARTESI_BLOCKCHAIN_ID: 31337
+  CARTESI_AUTH_PRIVATE_KEY: ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+  CARTESI_BLOCKCHAIN_WS_ENDPOINT: ws://devnet:8545
+  CARTESI_BLOCKCHAIN_HTTP_ENDPOINT: http://devnet:8545
+  CONSENSUS_ADDRESS: ${CONSENSUS_ADDRESS:-0x3e6e5b662a133bd5ff26b3e7989058a7c68ae6be}
+
+services:
+  devnet:
+    image: cartesi/sdk:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.37}
+    command:
+      [
+        "devnet",
+        "--block-time",
+        "${ANVIL_BLOCK_TIME:-2}",
+        "--slots-in-an-epoch",
+        "${ANVIL_SLOTS_IN_EPOCH:-1}",
+        "${ANVIL_VERBOSITY:---silent}",
+        ]
+    healthcheck:
+      test: ["CMD", "eth_isready"]
+      interval: 10s
+      timeout: 1s
+      retries: 5
+    environment:
+      ANVIL_IP_ADDR: 0.0.0.0
+    ports:
+        - 8545:8545
+
+  evm-reader:
+    depends_on:
+      database:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+      devnet:
+        condition: service_healthy
+    environment:
+      <<: *env-anvil
+
+  claimer:
+    depends_on:
+      database:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+      devnet:
+        condition: service_healthy
+    environment:
+      <<: *env-anvil
+
+  deployer:
+    depends_on:
+      database:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+      devnet:
+        condition: service_healthy
+    environment:
+      <<: *env-anvil
