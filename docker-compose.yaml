@@ -21,7 +21,7 @@ x-env: &env
 services:
   database:
     container_name: database
-    image: cartesi/rollups-database:0.12.0-alpha.37
+    image: cartesi/rollups-database:0.12.0-alpha.39
     environment:
       POSTGRES_PASSWORD: password
       <<: *env
@@ -46,7 +46,7 @@ services:
     build:
       dockerfile_inline: |
         # syntax=docker.io/docker/dockerfile:1
-        FROM cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.37}
+        FROM cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.39}
         USER root
         RUN mkdir -p /var/lib/cartesi-rollups-node/logs /var/lib/cartesi-rollups-node/snapshots && chown -R cartesi:cartesi /var/lib/cartesi-rollups-node
         USER cartesi
@@ -64,7 +64,7 @@ services:
 
   evm-reader:
     container_name: evm-reader
-    image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.37}
+    image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.39}
     command: ['bash','-c','cartesi-rollups-evm-reader 2>&1 | tee /var/lib/cartesi-rollups-node/logs/evm-reader.log']
     volumes:
       - cartesi-rollups-node-data:/var/lib/cartesi-rollups-node
@@ -82,7 +82,7 @@ services:
 
   advancer:
     container_name: advancer
-    image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.37}
+    image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.39}
     command: ['bash','-c','cartesi-rollups-advancer 2>&1 | tee /var/lib/cartesi-rollups-node/logs/advancer.log']
     volumes:
       - cartesi-rollups-node-data:/var/lib/cartesi-rollups-node
@@ -101,7 +101,7 @@ services:
 
   validator:
     container_name: validator
-    image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.37}
+    image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.39}
     command: ['bash','-c','cartesi-rollups-validator 2>&1 | tee /var/lib/cartesi-rollups-node/logs/validator.log']
     volumes:
       - cartesi-rollups-node-data:/var/lib/cartesi-rollups-node
@@ -119,7 +119,7 @@ services:
 
   claimer:
     container_name: claimer
-    image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.37}
+    image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.39}
     command: ['bash','-c','cartesi-rollups-claimer 2>&1 | tee /var/lib/cartesi-rollups-node/logs/claimer.log']
     volumes:
       - cartesi-rollups-node-data:/var/lib/cartesi-rollups-node
@@ -137,7 +137,7 @@ services:
 
   jsonrpc-api:
     container_name: jsonrpc-api
-    image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.37}
+    image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.39}
     command: ['bash','-c','cartesi-rollups-jsonrpc-api 2>&1 | tee /var/lib/cartesi-rollups-node/logs/jsonrpc-api.log']
     volumes:
       - cartesi-rollups-node-data:/var/lib/cartesi-rollups-node
@@ -156,7 +156,7 @@ services:
 
   prt:
     container_name: prt
-    image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.37}
+    image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.39}
     command: ['bash','-c','cartesi-rollups-prt 2>&1 | tee /var/lib/cartesi-rollups-node/logs/prt.log']
     volumes:
       - cartesi-rollups-node-data:/var/lib/cartesi-rollups-node
@@ -226,7 +226,7 @@ services:
     build:
       dockerfile_inline: |
         # syntax=docker.io/docker/dockerfile:1
-        FROM cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.37}
+        FROM cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.39}
         USER root
         RUN apt update && apt install -y --no-install-recommends curl ca-certificates jq
         ADD --chmod=755 https://gist.github.com/lynoferraz/15a627bbc16ac61afa44646af8628d04/raw/498d7ccae65c5ef1b7bdee7fb28b5eb843f2f12b/deployer.sh /usr/local/bin/deployer.sh
