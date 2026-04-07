@@ -1,4 +1,4 @@
-name: cartesi-rollups-node
+name: cartesi-rollups-node-anvil
 x-env: &env-anvil
   CARTESI_EPOCH_LENGTH: 10
   CARTESI_BLOCKCHAIN_DEFAULT_BLOCK: "latest"

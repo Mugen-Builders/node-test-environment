@@ -63,8 +63,8 @@ E.g. Deploy Rives Barebones Doom:
 ```shell
 node-compose run --rm -iT deployer deployer.sh - <<< '{
     "name":"rives-barebones-doom",
-    "snapshot_url":"https://github.com/lynoferraz/rives-barebones-doom/releases/download/v0.0.3/rives-barebones-doom-snapshot.tar.gz",
-    "snapshot_sha256sum":"69ce881bc79fdbe3382d17f6c10c299394eaff6add8095aa63dc9867a5bcc614"
+    "snapshot_url":"https://github.com/lynoferraz/rives-barebones-doom/releases/download/v0.0.4/rives-barebones-doom-snapshot.tar.gz",
+    "snapshot_sha256sum":"6f5b314ddd7b8ea10a20a6a321e29f26f6373ee6ae4e1c87487d84f26c7bbd34"
 }'
 ```
 

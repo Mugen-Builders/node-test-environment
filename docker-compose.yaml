@@ -2,6 +2,7 @@ name: cartesi-rollups-node
 x-env: &env
   CARTESI_SNAPSHOTS_DIR: "/var/lib/cartesi-rollups-node/snapshots"
   CARTESI_LOG_LEVEL: ${CARTESI_LOG_LEVEL:-info}
+  CARTESI_FEATURE_CLAIM_SUBMISSION_ENABLED: ${CARTESI_FEATURE_CLAIM_SUBMISSION_ENABLED:-}
   CARTESI_CONTRACTS_INPUT_BOX_ADDRESS: ${CARTESI_CONTRACTS_INPUT_BOX_ADDRESS:-0x1b51e2992A2755Ba4D6F7094032DF91991a0Cfac}
   CARTESI_CONTRACTS_AUTHORITY_FACTORY_ADDRESS: ${CARTESI_CONTRACTS_AUTHORITY_FACTORY_ADDRESS:-0x5E96408CFE423b01dADeD3bc867E6013135990cc}
   CARTESI_CONTRACTS_APPLICATION_FACTORY_ADDRESS: ${CARTESI_CONTRACTS_APPLICATION_FACTORY_ADDRESS:-0x26E758238CB6eC5aB70ce0dd52aF2d7b82e1972E}
@@ -17,6 +18,18 @@ x-env: &env
   CARTESI_BLOCKCHAIN_WS_ENDPOINT: ${CARTESI_BLOCKCHAIN_WS_ENDPOINT:-}
   CARTESI_BLOCKCHAIN_HTTP_ENDPOINT: ${CARTESI_BLOCKCHAIN_HTTP_ENDPOINT:-}
   CONSENSUS_ADDRESS: ${CONSENSUS_ADDRESS:-}
+
+x-defaults: &node-image
+  image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.39}
+  volumes:
+    - cartesi-rollups-node-data:/var/lib/cartesi-rollups-node
+  depends_on:
+    database:
+      condition: service_healthy
+    migrate:
+      condition: service_completed_successfully
+  networks:
+    - default
 
 services:
   database:
@@ -39,7 +52,7 @@ services:
       start_period: 10s
       start_interval: 200ms
     volumes:
-      - pgdata:/var/lib/postgresql/data 
+      - pgdata:/var/lib/postgresql/data
 
   migrate:
     container_name: migrate
@@ -63,36 +76,32 @@ services:
       <<: *env
 
   evm-reader:
+    <<: *node-image
     container_name: evm-reader
-    image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.39}
-    command: ['bash','-c','cartesi-rollups-evm-reader 2>&1 | tee /var/lib/cartesi-rollups-node/logs/evm-reader.log']
-    volumes:
-      - cartesi-rollups-node-data:/var/lib/cartesi-rollups-node
-    depends_on:
-      database:
-        condition: service_healthy
-      migrate:
-        condition: service_completed_successfully
-    networks:
-      - default
+    command:
+      [
+        "bash",
+        "-c",
+        "cartesi-rollups-evm-reader 2>&1 | tee /var/lib/cartesi-rollups-node/logs/evm-reader.log",
+      ]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:10001/readyz"]
     ports:
       - "10001:10001"
     environment:
       <<: *env
 
   advancer:
+    <<: *node-image
     container_name: advancer
-    image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.39}
-    command: ['bash','-c','cartesi-rollups-advancer 2>&1 | tee /var/lib/cartesi-rollups-node/logs/advancer.log']
-    volumes:
-      - cartesi-rollups-node-data:/var/lib/cartesi-rollups-node
-    depends_on:
-      database:
-        condition: service_healthy
-      migrate:
-        condition: service_completed_successfully
-    networks:
-      - default
+    command:
+      [
+        "bash",
+        "-c",
+        "cartesi-rollups-advancer 2>&1 | tee /var/lib/cartesi-rollups-node/logs/advancer.log",
+      ]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:10002/readyz"]
     ports:
       - "10002:10002"
       - "10012:10012"
@@ -100,54 +109,48 @@ services:
       <<: *env
 
   validator:
+    <<: *node-image
     container_name: validator
-    image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.39}
-    command: ['bash','-c','cartesi-rollups-validator 2>&1 | tee /var/lib/cartesi-rollups-node/logs/validator.log']
-    volumes:
-      - cartesi-rollups-node-data:/var/lib/cartesi-rollups-node
-    depends_on:
-      database:
-        condition: service_healthy
-      migrate:
-        condition: service_completed_successfully
-    networks:
-      - default
+    command:
+      [
+        "bash",
+        "-c",
+        "cartesi-rollups-validator 2>&1 | tee /var/lib/cartesi-rollups-node/logs/validator.log",
+      ]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:10003/readyz"]
     ports:
       - "10003:10003"
     environment:
       <<: *env
 
   claimer:
+    <<: *node-image
     container_name: claimer
-    image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.39}
-    command: ['bash','-c','cartesi-rollups-claimer 2>&1 | tee /var/lib/cartesi-rollups-node/logs/claimer.log']
-    volumes:
-      - cartesi-rollups-node-data:/var/lib/cartesi-rollups-node
-    depends_on:
-      database:
-        condition: service_healthy
-      migrate:
-        condition: service_completed_successfully
-    networks:
-      - default
+    command:
+      [
+        "bash",
+        "-c",
+        "cartesi-rollups-claimer 2>&1 | tee /var/lib/cartesi-rollups-node/logs/claimer.log",
+      ]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:10004/readyz"]
     ports:
       - "10004:10004"
     environment:
       <<: *env
 
   jsonrpc-api:
+    <<: *node-image
     container_name: jsonrpc-api
-    image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.39}
-    command: ['bash','-c','cartesi-rollups-jsonrpc-api 2>&1 | tee /var/lib/cartesi-rollups-node/logs/jsonrpc-api.log']
-    volumes:
-      - cartesi-rollups-node-data:/var/lib/cartesi-rollups-node
-    depends_on:
-      database:
-        condition: service_healthy
-      migrate:
-        condition: service_completed_successfully
-    networks:
-      - default
+    command:
+      [
+        "bash",
+        "-c",
+        "cartesi-rollups-jsonrpc-api 2>&1 | tee /var/lib/cartesi-rollups-node/logs/jsonrpc-api.log",
+      ]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:10005/readyz"]
     ports:
       - "10005:10005"
       - "10011:10011"
@@ -155,20 +158,18 @@ services:
       <<: *env
 
   prt:
+    <<: *node-image
     container_name: prt
-    image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.39}
-    command: ['bash','-c','cartesi-rollups-prt 2>&1 | tee /var/lib/cartesi-rollups-node/logs/prt.log']
-    volumes:
-      - cartesi-rollups-node-data:/var/lib/cartesi-rollups-node
-    depends_on:
-      database:
-        condition: service_healthy
-      migrate:
-        condition: service_completed_successfully
-    networks:
-      - default
+    command:
+      [
+        "bash",
+        "-c",
+        "cartesi-rollups-prt 2>&1 | tee /var/lib/cartesi-rollups-node/logs/prt.log",
+      ]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:10003/readyz"]
     ports:
-      - "10006:10006"
+      - "10006:10003"
     environment:
       <<: *env
 
@@ -223,13 +224,15 @@ services:
       - "8080:80"
 
   deployer:
+    container_name: deployer
+    image: dapp-deployer:latest
     build:
       dockerfile_inline: |
         # syntax=docker.io/docker/dockerfile:1
         FROM cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.39}
         USER root
         RUN apt update && apt install -y --no-install-recommends curl ca-certificates jq
-        ADD --chmod=755 https://gist.github.com/lynoferraz/15a627bbc16ac61afa44646af8628d04/raw/ac4fc0736fd64f13f1fcb25cdc02e1b66697a4e1/deployer.sh /usr/local/bin/deployer.sh
+        ADD --chmod=755 https://gist.github.com/lynoferraz/15a627bbc16ac61afa44646af8628d04/raw/7e82a0918bb96f6782b42867fb6e7802fa3e8c95/deployer.sh /usr/local/bin/deployer.sh
         USER cartesi
     command: echo "Deployer - nothing to do"
     depends_on:
