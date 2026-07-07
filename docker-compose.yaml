@@ -233,7 +233,7 @@ services:
         FROM cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.41}
         USER root
         RUN apt update && apt install -y --no-install-recommends curl ca-certificates jq
-        ADD --chmod=755 https://gist.github.com/lynoferraz/15a627bbc16ac61afa44646af8628d04/raw/68e6f7269079393e839c1349e50f6afa9762cfb2/deployer.sh /usr/local/bin/deployer.sh
+        ADD --chmod=755 https://gist.github.com/lynoferraz/15a627bbc16ac61afa44646af8628d04/raw/c623fdde0a8b6d14c144d3b840a62805bc12c987/deployer.sh /usr/local/bin/deployer.sh
         USER cartesi
     command: echo "Deployer - nothing to do"
     depends_on:
