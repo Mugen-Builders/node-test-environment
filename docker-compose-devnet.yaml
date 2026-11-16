@@ -7,11 +7,11 @@ x-env: &env-anvil
   CARTESI_AUTH_PRIVATE_KEY: ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
   CARTESI_BLOCKCHAIN_WS_ENDPOINT: ws://devnet:8545
   CARTESI_BLOCKCHAIN_HTTP_ENDPOINT: http://devnet:8545
-  CONSENSUS_ADDRESS: ${CONSENSUS_ADDRESS:-0xc11e475c74a37a57b350039301e85a7512c5edd3}
+  CONSENSUS_ADDRESS: ${CONSENSUS_ADDRESS:-0x9d78ba87a2ebf699602fc6d692ebaafb4f479cc7}
 
 services:
   devnet:
-    image: cartesi/sdk:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.41}
+    image: cartesi/sdk:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.45}
     command:
       [
         "devnet",

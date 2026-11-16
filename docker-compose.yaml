@@ -4,11 +4,11 @@ x-env: &env
   CARTESI_LOG_LEVEL: ${CARTESI_LOG_LEVEL:-info}
   CARTESI_LOG_COLOR: ${CARTESI_LOG_COLOR:-false}
   CARTESI_FEATURE_CLAIM_SUBMISSION_ENABLED: ${CARTESI_FEATURE_CLAIM_SUBMISSION_ENABLED:-}
-  CARTESI_CONTRACTS_INPUT_BOX_ADDRESS: ${CARTESI_CONTRACTS_INPUT_BOX_ADDRESS:-0x346B3df038FE9f8380071eC6514D5a83aD143939}
-  CARTESI_CONTRACTS_AUTHORITY_FACTORY_ADDRESS: ${CARTESI_CONTRACTS_AUTHORITY_FACTORY_ADDRESS:-0x3C1FE01c542a88A523FF6847eD1E26176c8C4ED0}
-  CARTESI_CONTRACTS_APPLICATION_FACTORY_ADDRESS: ${CARTESI_CONTRACTS_APPLICATION_FACTORY_ADDRESS:-0xC549F89cF1ca43eDDECC64Ac2208F4b283B1c483}
-  CARTESI_CONTRACTS_SELF_HOSTED_APPLICATION_FACTORY_ADDRESS: ${CARTESI_CONTRACTS_SELF_HOSTED_APPLICATION_FACTORY_ADDRESS:-0x6145C5996a71a379E030aEb0440df79D60833418}
-  CARTESI_CONTRACTS_DAVE_APP_FACTORY_ADDRESS: ${CARTESI_CONTRACTS_DAVE_APP_FACTORY_ADDRESS:-0x33FFf0b681c90664dD048a60400AE2D827a4c5bb}
+  CARTESI_CONTRACTS_INPUT_BOX_ADDRESS: ${CARTESI_CONTRACTS_INPUT_BOX_ADDRESS:-0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C}
+  CARTESI_CONTRACTS_AUTHORITY_FACTORY_ADDRESS: ${CARTESI_CONTRACTS_AUTHORITY_FACTORY_ADDRESS:-0xB4d29c86e36385b5321a453C34D288AEB0ad11f9}
+  CARTESI_CONTRACTS_APPLICATION_FACTORY_ADDRESS: ${CARTESI_CONTRACTS_APPLICATION_FACTORY_ADDRESS:-0x35Cd91f13141Bb6A6FC69E1eeDD241bbA1Ddd45F}
+  CARTESI_CONTRACTS_SELF_HOSTED_APPLICATION_FACTORY_ADDRESS: ${CARTESI_CONTRACTS_SELF_HOSTED_APPLICATION_FACTORY_ADDRESS:-0x9e6866A965dC5f99f95EF6B0d8399dad18eEf98b}
+  CARTESI_CONTRACTS_DAVE_APP_FACTORY_ADDRESS: ${CARTESI_CONTRACTS_DAVE_APP_FACTORY_ADDRESS:-0x57Fa21e52e7749705Ce6BAbe84a7F63E13bA07Ba}
   CARTESI_DATABASE_CONNECTION: postgres://postgres:password@database:5432/rollupsdb?sslmode=disable
   CARTESI_EPOCH_LENGTH: ${CARTESI_EPOCH_LENGTH:-7200}
   CARTESI_BLOCKCHAIN_DEFAULT_BLOCK: ${CARTESI_BLOCKCHAIN_DEFAULT_BLOCK:-finalized}
@@ -21,7 +21,7 @@ x-env: &env
   CONSENSUS_ADDRESS: ${CONSENSUS_ADDRESS:-}
 
 x-defaults: &node-image
-  image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.41}
+  image: cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.45}
   volumes:
     - cartesi-rollups-node-data:/var/lib/cartesi-rollups-node
   depends_on:
@@ -35,7 +35,7 @@ x-defaults: &node-image
 services:
   database:
     container_name: database
-    image: cartesi/rollups-database:0.12.0-alpha.41
+    image: cartesi/rollups-database:0.12.0-alpha.45
     environment:
       POSTGRES_PASSWORD: password
       <<: *env
@@ -60,7 +60,7 @@ services:
     build:
       dockerfile_inline: |
         # syntax=docker.io/docker/dockerfile:1
-        FROM cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.41}
+        FROM cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.45}
         USER root
         RUN mkdir -p /var/lib/cartesi-rollups-node/logs /var/lib/cartesi-rollups-node/snapshots && chown -R cartesi:cartesi /var/lib/cartesi-rollups-node
         USER cartesi
@@ -174,6 +174,8 @@ services:
     environment:
       <<: *env
 
+  # TODO: slingnode: main watcher service to stat sling node when it detectes new prt applications
+
   nginx:
     build:
       dockerfile_inline: |
@@ -230,7 +232,7 @@ services:
     build:
       dockerfile_inline: |
         # syntax=docker.io/docker/dockerfile:1
-        FROM cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.41}
+        FROM cartesi/rollups-runtime:${CARTESI_RUNTIME_VERSION:-0.12.0-alpha.45}
         USER root
         RUN apt update && apt install -y --no-install-recommends curl ca-certificates jq
         ADD --chmod=755 https://gist.github.com/lynoferraz/15a627bbc16ac61afa44646af8628d04/raw/c623fdde0a8b6d14c144d3b840a62805bc12c987/deployer.sh /usr/local/bin/deployer.sh
